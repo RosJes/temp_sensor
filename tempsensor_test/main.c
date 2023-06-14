@@ -58,15 +58,34 @@ int main(void)
 
     int16_t temp_C;
     uint16_t adcVal;
-  
+    uint16_t adc_PA7; //VM_vswr_FWD
+	uint16_t adc_PD7;//	VM_vswr_RFD
+	uint16_t adc_PF0;//	VM_6V2
+	uint16_t adc_PF2;//	VM_pwrInNeg
+	uint16_t adc_PF3;//	VM_pwrInPos
+	uint16_t adc_PF4;//	VM_48V0
+	uint16_t adc_PF5;//	VM_8V0
     
     while (1)
     {
 	    /* Read the conversion result */
 	    adcVal = ADC0_GetConversion(ADC_MUXPOS_TEMPSENSE_gc);
+		adc_PA7= ADC0_GetConversion(ADC_MUXPOS_AIN27_gc);
+		adc_PD7 =ADC0_GetConversion(ADC_MUXPOS_AIN7_gc);
+		adc_PF0=ADC0_GetConversion(ADC_MUXPOS_AIN16_gc);
+		adc_PF2=ADC0_GetConversion(ADC_MUXPOS_AIN18_gc);
+		adc_PF3=ADC0_GetConversion(ADC_MUXPOS_AIN19_gc);
+		adc_PF4=ADC0_GetConversion(ADC_MUXPOS_AIN20_gc);
+		adc_PF5=ADC0_GetConversion(ADC_MUXPOS_AIN21_gc);
 	    /* Convert the ADC result in degrees C */
 	    temp_C = temperatureConvert(adcVal);
+		printf("%d",adc_PA7);
+		printf("%d",adc_PD7);
+		printf("%d",adc_PF0);
+		printf("%d",adc_PF2);
+		printf("%d",adc_PF3);
+		printf("%d",adc_PF4);
+		printf("%d",adc_PF5);
 		printf("%d",temp_C);
-		
     }
 }
