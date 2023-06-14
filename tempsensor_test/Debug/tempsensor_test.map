@@ -733,24 +733,24 @@ END GROUP
  .debug_frame   0x00000360       0x24 mcc_generated_files/system/src/system.o
  .debug_frame   0x00000384       0x24 mcc_generated_files/vref/src/vref.o
 
-.debug_str      0x00000000     0x22e5
+.debug_str      0x00000000     0x2316
  *(.debug_str)
  .debug_str     0x00000000      0xefb C:/Program Files (x86)/Atmel/Studio/7.0/Packs/Atmel/AVR-Dx_DFP/2.2.253/gcc/dev/avr64dd32/avrxmega2/crtavr64dd32.o
- .debug_str     0x00000efb      0x56c main.o
-                                0x5ad (size before relaxing)
- .debug_str     0x00001467      0x55a mcc_generated_files/adc/src/adc0.o
+ .debug_str     0x00000efb      0x54d main.o
+                                0x58e (size before relaxing)
+ .debug_str     0x00001448      0x5aa mcc_generated_files/adc/src/adc0.o
                                 0x9ba (size before relaxing)
- .debug_str     0x000019c1      0x1c3 mcc_generated_files/system/src/clock.o
+ .debug_str     0x000019f2      0x1c3 mcc_generated_files/system/src/clock.o
                                 0x37f (size before relaxing)
- .debug_str     0x00001b84      0x4d8 mcc_generated_files/system/src/config_bits.o
+ .debug_str     0x00001bb5      0x4d8 mcc_generated_files/system/src/config_bits.o
                                 0x667 (size before relaxing)
- .debug_str     0x0000205c       0x67 mcc_generated_files/system/src/interrupt.o
+ .debug_str     0x0000208d       0x67 mcc_generated_files/system/src/interrupt.o
                                 0x24b (size before relaxing)
- .debug_str     0x000020c3      0x197 mcc_generated_files/system/src/pins.o
+ .debug_str     0x000020f4      0x197 mcc_generated_files/system/src/pins.o
                                 0x34d (size before relaxing)
- .debug_str     0x0000225a       0x3b mcc_generated_files/system/src/system.o
+ .debug_str     0x0000228b       0x3b mcc_generated_files/system/src/system.o
                                 0x207 (size before relaxing)
- .debug_str     0x00002295       0x50 mcc_generated_files/vref/src/vref.o
+ .debug_str     0x000022c6       0x50 mcc_generated_files/vref/src/vref.o
                                 0x201 (size before relaxing)
 
 .debug_loc      0x00000000      0x724

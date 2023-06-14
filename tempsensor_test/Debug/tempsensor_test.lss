@@ -25,11 +25,11 @@ Idx Name          Size      VMA       LMA       File off  Algn
                   CONTENTS, READONLY, DEBUGGING
  10 .debug_frame  000003a8  00000000  00000000  00008a34  2**2
                   CONTENTS, READONLY, DEBUGGING
- 11 .debug_str    000022e5  00000000  00000000  00008ddc  2**0
+ 11 .debug_str    00002316  00000000  00000000  00008ddc  2**0
                   CONTENTS, READONLY, DEBUGGING
- 12 .debug_loc    00000724  00000000  00000000  0000b0c1  2**0
+ 12 .debug_loc    00000724  00000000  00000000  0000b0f2  2**0
                   CONTENTS, READONLY, DEBUGGING
- 13 .debug_ranges 00000150  00000000  00000000  0000b7e5  2**0
+ 13 .debug_ranges 00000150  00000000  00000000  0000b816  2**0
                   CONTENTS, READONLY, DEBUGGING
 
 Disassembly of section .text:
@@ -118,14 +118,14 @@ int16_t temperatureConvert(uint16_t data);
 //======================================================
 int16_t temperatureConvert(uint16_t data)
 {
-	uint16_t sigrow_offset = SIGROW.TEMPSENSE1/2;
+	uint16_t sigrow_offset = SIGROW.TEMPSENSE1 /2; //TEMPSENSE1/2
   ce:	e0 e0       	ldi	r30, 0x00	; 0
   d0:	f1 e1       	ldi	r31, 0x11	; 17
   d2:	26 81       	ldd	r18, Z+6	; 0x06
   d4:	37 81       	ldd	r19, Z+7	; 0x07
   d6:	36 95       	lsr	r19
   d8:	27 95       	ror	r18
-	uint16_t sigrow_slope = SIGROW.TEMPSENSE0*2;
+	uint16_t sigrow_slope = SIGROW.TEMPSENSE0 * 2;//TEMPSENSE0*2
   da:	a4 81       	ldd	r26, Z+4	; 0x04
   dc:	b5 81       	ldd	r27, Z+5	; 0x05
   de:	aa 0f       	add	r26, r26
@@ -139,10 +139,10 @@ int16_t temperatureConvert(uint16_t data)
 	temp *= sigrow_slope;
   e6:	0e 94 24 02 	call	0x448	; 0x448 <__umulhisi3>
 	/* Add 4096/2 to get correct rounding on division below */
-	temp += 4096;//0x0800;
+	temp += 0x0800;
   ea:	dc 01       	movw	r26, r24
   ec:	cb 01       	movw	r24, r22
-  ee:	90 5f       	subi	r25, 0xF0	; 240
+  ee:	98 5f       	subi	r25, 0xF8	; 248
   f0:	af 4f       	sbci	r26, 0xFF	; 255
   f2:	bf 4f       	sbci	r27, 0xFF	; 255
 	/* Round off to nearest degree in Kelvin, by dividing with 2^12 (4096) */
@@ -195,12 +195,6 @@ int main(void)
  132:	ee cf       	rjmp	.-36     	; 0x110 <main+0x4>
 
 00000134 <ADC0_Initialize>:
-    ADC0_window_cb = f;
-}
-
-void ADC0_RegisterResrdyCallback(adc_irq_cb_t f)
-{
-    ADC0_resrdy_cb = f;
  134:	e0 e0       	ldi	r30, 0x00	; 0
  136:	f6 e0       	ldi	r31, 0x06	; 6
  138:	11 82       	std	Z+1, r1	; 0x01
@@ -256,10 +250,6 @@ void ADC0_RegisterResrdyCallback(adc_irq_cb_t f)
  19a:	08 95       	ret
 
 0000019c <__vector_27>:
-}
-
-ISR(ADC0_WCMP_vect)
-{        
  19c:	1f 92       	push	r1
  19e:	0f 92       	push	r0
  1a0:	0f b6       	in	r0, 0x3f	; 63
@@ -277,21 +267,13 @@ ISR(ADC0_WCMP_vect)
  1b8:	bf 93       	push	r27
  1ba:	ef 93       	push	r30
  1bc:	ff 93       	push	r31
-    // Clear the interrupt flag
-    ADC0.INTFLAGS = ADC_WCMP_bm;
  1be:	82 e0       	ldi	r24, 0x02	; 2
  1c0:	80 93 0d 06 	sts	0x060D, r24	; 0x80060d <__TEXT_REGION_LENGTH__+0x7f060d>
-
-    if (ADC0_window_cb != NULL)
  1c4:	e0 91 06 60 	lds	r30, 0x6006	; 0x806006 <ADC0_window_cb>
  1c8:	f0 91 07 60 	lds	r31, 0x6007	; 0x806007 <ADC0_window_cb+0x1>
  1cc:	30 97       	sbiw	r30, 0x00	; 0
  1ce:	09 f0       	breq	.+2      	; 0x1d2 <__vector_27+0x36>
-    {
-        ADC0_window_cb();
  1d0:	09 95       	icall
-    }
-}
  1d2:	ff 91       	pop	r31
  1d4:	ef 91       	pop	r30
  1d6:	bf 91       	pop	r27
@@ -311,9 +293,6 @@ ISR(ADC0_WCMP_vect)
  1f2:	18 95       	reti
 
 000001f4 <__vector_26>:
-
-ISR(ADC0_RESRDY_vect)
-{
  1f4:	1f 92       	push	r1
  1f6:	0f 92       	push	r0
  1f8:	0f b6       	in	r0, 0x3f	; 63
@@ -331,20 +310,13 @@ ISR(ADC0_RESRDY_vect)
  210:	bf 93       	push	r27
  212:	ef 93       	push	r30
  214:	ff 93       	push	r31
-    // Clear the interrupt flag
-    ADC0.INTFLAGS = ADC_RESRDY_bm;
  216:	81 e0       	ldi	r24, 0x01	; 1
  218:	80 93 0d 06 	sts	0x060D, r24	; 0x80060d <__TEXT_REGION_LENGTH__+0x7f060d>
-
-    if (ADC0_resrdy_cb != NULL)
  21c:	e0 91 04 60 	lds	r30, 0x6004	; 0x806004 <__data_end>
  220:	f0 91 05 60 	lds	r31, 0x6005	; 0x806005 <__data_end+0x1>
  224:	30 97       	sbiw	r30, 0x00	; 0
  226:	09 f0       	breq	.+2      	; 0x22a <__vector_26+0x36>
-    {
-        ADC0_resrdy_cb();
  228:	09 95       	icall
-    }
  22a:	ff 91       	pop	r31
  22c:	ef 91       	pop	r30
  22e:	bf 91       	pop	r27
@@ -364,12 +336,6 @@ ISR(ADC0_RESRDY_vect)
  24a:	18 95       	reti
 
 0000024c <CLOCK_Initialize>:
- *       on calling convention. The memory model is not visible to the
- *       preprocessor, so it must be defined in the Assembler preprocessor directives.
- */
-static inline void ccp_write_io(void *addr, uint8_t value)
-{
-	protected_write_io(addr, CCP_IOREG_gc, value);
  24c:	40 e0       	ldi	r20, 0x00	; 0
  24e:	68 ed       	ldi	r22, 0xD8	; 216
  250:	80 e6       	ldi	r24, 0x60	; 96
@@ -430,19 +396,9 @@ static inline void ccp_write_io(void *addr, uint8_t value)
  2d4:	80 e8       	ldi	r24, 0x80	; 128
  2d6:	90 e0       	ldi	r25, 0x00	; 0
  2d8:	0e 94 0d 02 	call	0x41a	; 0x41a <protected_write_io>
-    //CSUTHF 256; ENABLE disabled; FRQRANGE 8M; RUNSTBY disabled; SELHF XTAL; 
-    ccp_write_io((void*)&(CLKCTRL.XOSCHFCTRLA),0x0);
-
-
-    // System clock stability check by polling the status register.
-    while(!(CLKCTRL.MCLKSTATUS & CLKCTRL_OSCHFS_bm));
  2dc:	80 91 65 00 	lds	r24, 0x0065	; 0x800065 <__TEXT_REGION_LENGTH__+0x7f0065>
  2e0:	81 ff       	sbrs	r24, 1
  2e2:	fc cf       	rjmp	.-8      	; 0x2dc <CLOCK_Initialize+0x90>
-
-
-    // System clock stability check by polling the PLL status.
-}
  2e4:	08 95       	ret
 
 000002e6 <CPUINT_Initialize>:
@@ -451,192 +407,110 @@ static inline void ccp_write_io(void *addr, uint8_t value)
  2ea:	80 e1       	ldi	r24, 0x10	; 16
  2ec:	91 e0       	ldi	r25, 0x01	; 1
  2ee:	0e 94 0d 02 	call	0x41a	; 0x41a <protected_write_io>
-
-    //CVT disabled; IVSEL disabled; LVL0RR disabled; 
-    ccp_write_io((void*)&(CPUINT.CTRLA),0x0);
-    
-    //LVL0PRI 0; 
-    CPUINT.LVL0PRI = 0x0;
  2f2:	e0 e1       	ldi	r30, 0x10	; 16
  2f4:	f1 e0       	ldi	r31, 0x01	; 1
  2f6:	12 82       	std	Z+2, r1	; 0x02
-    
-    //LVL1VEC 0; 
-    CPUINT.LVL1VEC = 0x0;
  2f8:	13 82       	std	Z+3, r1	; 0x03
-
-        
-    return 0;
  2fa:	80 e0       	ldi	r24, 0x00	; 0
  2fc:	08 95       	ret
 
 000002fe <PIN_MANAGER_Initialize>:
-
-#include "../pins.h"
-
-
-void PIN_MANAGER_Initialize()
-{
  2fe:	cf 93       	push	r28
  300:	df 93       	push	r29
-  /* DIR Registers Initialization */
-    PORTA.DIR = 0x0;
  302:	80 e0       	ldi	r24, 0x00	; 0
  304:	94 e0       	ldi	r25, 0x04	; 4
  306:	fc 01       	movw	r30, r24
  308:	10 82       	st	Z, r1
-    PORTC.DIR = 0x0;
  30a:	c0 e4       	ldi	r28, 0x40	; 64
  30c:	d4 e0       	ldi	r29, 0x04	; 4
  30e:	18 82       	st	Y, r1
-    PORTD.DIR = 0x0;
  310:	a0 e6       	ldi	r26, 0x60	; 96
  312:	b4 e0       	ldi	r27, 0x04	; 4
  314:	1c 92       	st	X, r1
-    PORTF.DIR = 0x0;
  316:	20 ea       	ldi	r18, 0xA0	; 160
  318:	34 e0       	ldi	r19, 0x04	; 4
  31a:	f9 01       	movw	r30, r18
  31c:	10 82       	st	Z, r1
-
-  /* OUT Registers Initialization */
-    PORTA.OUT = 0x0;
  31e:	fc 01       	movw	r30, r24
  320:	14 82       	std	Z+4, r1	; 0x04
-    PORTC.OUT = 0x0;
  322:	1c 82       	std	Y+4, r1	; 0x04
-    PORTD.OUT = 0x0;
  324:	14 96       	adiw	r26, 0x04	; 4
  326:	1c 92       	st	X, r1
  328:	14 97       	sbiw	r26, 0x04	; 4
-    PORTF.OUT = 0x0;
  32a:	f9 01       	movw	r30, r18
  32c:	14 82       	std	Z+4, r1	; 0x04
-
-  /* PINxCTRL registers Initialization */
-    PORTA.PIN0CTRL = 0x0;
  32e:	fc 01       	movw	r30, r24
  330:	10 8a       	std	Z+16, r1	; 0x10
-    PORTA.PIN1CTRL = 0x0;
  332:	11 8a       	std	Z+17, r1	; 0x11
-    PORTA.PIN2CTRL = 0x0;
  334:	12 8a       	std	Z+18, r1	; 0x12
-    PORTA.PIN3CTRL = 0x0;
  336:	13 8a       	std	Z+19, r1	; 0x13
-    PORTA.PIN4CTRL = 0x0;
  338:	14 8a       	std	Z+20, r1	; 0x14
-    PORTA.PIN5CTRL = 0x0;
  33a:	15 8a       	std	Z+21, r1	; 0x15
-    PORTA.PIN6CTRL = 0x0;
  33c:	16 8a       	std	Z+22, r1	; 0x16
-    PORTA.PIN7CTRL = 0x0;
  33e:	17 8a       	std	Z+23, r1	; 0x17
-    PORTC.PIN0CTRL = 0x0;
  340:	18 8a       	std	Y+16, r1	; 0x10
-    PORTC.PIN1CTRL = 0x0;
  342:	19 8a       	std	Y+17, r1	; 0x11
-    PORTC.PIN2CTRL = 0x0;
  344:	1a 8a       	std	Y+18, r1	; 0x12
-    PORTC.PIN3CTRL = 0x0;
  346:	1b 8a       	std	Y+19, r1	; 0x13
-    PORTC.PIN4CTRL = 0x0;
  348:	1c 8a       	std	Y+20, r1	; 0x14
-    PORTC.PIN5CTRL = 0x0;
  34a:	1d 8a       	std	Y+21, r1	; 0x15
-    PORTC.PIN6CTRL = 0x0;
  34c:	1e 8a       	std	Y+22, r1	; 0x16
-    PORTC.PIN7CTRL = 0x0;
  34e:	1f 8a       	std	Y+23, r1	; 0x17
-    PORTD.PIN0CTRL = 0x0;
  350:	50 96       	adiw	r26, 0x10	; 16
  352:	1c 92       	st	X, r1
  354:	50 97       	sbiw	r26, 0x10	; 16
-    PORTD.PIN1CTRL = 0x0;
  356:	51 96       	adiw	r26, 0x11	; 17
  358:	1c 92       	st	X, r1
  35a:	51 97       	sbiw	r26, 0x11	; 17
-    PORTD.PIN2CTRL = 0x0;
  35c:	52 96       	adiw	r26, 0x12	; 18
  35e:	1c 92       	st	X, r1
  360:	52 97       	sbiw	r26, 0x12	; 18
-    PORTD.PIN3CTRL = 0x0;
  362:	53 96       	adiw	r26, 0x13	; 19
  364:	1c 92       	st	X, r1
  366:	53 97       	sbiw	r26, 0x13	; 19
-    PORTD.PIN4CTRL = 0x0;
  368:	54 96       	adiw	r26, 0x14	; 20
  36a:	1c 92       	st	X, r1
  36c:	54 97       	sbiw	r26, 0x14	; 20
-    PORTD.PIN5CTRL = 0x0;
  36e:	55 96       	adiw	r26, 0x15	; 21
  370:	1c 92       	st	X, r1
  372:	55 97       	sbiw	r26, 0x15	; 21
-    PORTD.PIN6CTRL = 0x0;
  374:	56 96       	adiw	r26, 0x16	; 22
  376:	1c 92       	st	X, r1
  378:	56 97       	sbiw	r26, 0x16	; 22
-    PORTD.PIN7CTRL = 0x0;
  37a:	57 96       	adiw	r26, 0x17	; 23
  37c:	1c 92       	st	X, r1
-    PORTF.PIN0CTRL = 0x0;
  37e:	f9 01       	movw	r30, r18
  380:	10 8a       	std	Z+16, r1	; 0x10
-    PORTF.PIN1CTRL = 0x0;
  382:	11 8a       	std	Z+17, r1	; 0x11
-    PORTF.PIN2CTRL = 0x0;
  384:	12 8a       	std	Z+18, r1	; 0x12
-    PORTF.PIN3CTRL = 0x0;
  386:	13 8a       	std	Z+19, r1	; 0x13
-    PORTF.PIN4CTRL = 0x0;
  388:	14 8a       	std	Z+20, r1	; 0x14
-    PORTF.PIN5CTRL = 0x0;
  38a:	15 8a       	std	Z+21, r1	; 0x15
-    PORTF.PIN6CTRL = 0x0;
  38c:	16 8a       	std	Z+22, r1	; 0x16
-    PORTF.PIN7CTRL = 0x0;
  38e:	17 8a       	std	Z+23, r1	; 0x17
-
-  /* PORTMUX Initialization */
-    PORTMUX.CCLROUTEA = 0x0;
  390:	e0 ee       	ldi	r30, 0xE0	; 224
  392:	f5 e0       	ldi	r31, 0x05	; 5
  394:	11 82       	std	Z+1, r1	; 0x01
-    PORTMUX.EVSYSROUTEA = 0x0;
  396:	10 82       	st	Z, r1
-    PORTMUX.SPIROUTEA = 0x0;
  398:	15 82       	std	Z+5, r1	; 0x05
-    PORTMUX.TCAROUTEA = 0x0;
  39a:	17 82       	std	Z+7, r1	; 0x07
-    PORTMUX.TCBROUTEA = 0x0;
  39c:	10 86       	std	Z+8, r1	; 0x08
-    PORTMUX.TCDROUTEA = 0x0;
  39e:	11 86       	std	Z+9, r1	; 0x09
-    PORTMUX.TWIROUTEA = 0x0;
  3a0:	16 82       	std	Z+6, r1	; 0x06
-    PORTMUX.USARTROUTEA = 0x0;
  3a2:	12 82       	std	Z+2, r1	; 0x02
-
-  // register default ISC callback functions at runtime; use these methods to register a custom function
-}
  3a4:	df 91       	pop	r29
  3a6:	cf 91       	pop	r28
  3a8:	08 95       	ret
 
 000003aa <__vector_8>:
-
-ISR(PORTA_PORT_vect)
-{ 
  3aa:	1f 92       	push	r1
  3ac:	0f 92       	push	r0
  3ae:	0f b6       	in	r0, 0x3f	; 63
  3b0:	0f 92       	push	r0
  3b2:	11 24       	eor	r1, r1
  3b4:	8f 93       	push	r24
-    /* Clear interrupt flags */
-    VPORTA.INTFLAGS = 0xff;
  3b6:	8f ef       	ldi	r24, 0xFF	; 255
  3b8:	83 b9       	out	0x03, r24	; 3
-}
  3ba:	8f 91       	pop	r24
  3bc:	0f 90       	pop	r0
  3be:	0f be       	out	0x3f, r0	; 63
@@ -645,20 +519,14 @@ ISR(PORTA_PORT_vect)
  3c4:	18 95       	reti
 
 000003c6 <__vector_29>:
-
-ISR(PORTC_PORT_vect)
-{ 
  3c6:	1f 92       	push	r1
  3c8:	0f 92       	push	r0
  3ca:	0f b6       	in	r0, 0x3f	; 63
  3cc:	0f 92       	push	r0
  3ce:	11 24       	eor	r1, r1
  3d0:	8f 93       	push	r24
-    /* Clear interrupt flags */
-    VPORTC.INTFLAGS = 0xff;
  3d2:	8f ef       	ldi	r24, 0xFF	; 255
  3d4:	8b b9       	out	0x0b, r24	; 11
-}
  3d6:	8f 91       	pop	r24
  3d8:	0f 90       	pop	r0
  3da:	0f be       	out	0x3f, r0	; 63
@@ -667,20 +535,14 @@ ISR(PORTC_PORT_vect)
  3e0:	18 95       	reti
 
 000003e2 <__vector_24>:
-
-ISR(PORTD_PORT_vect)
-{ 
  3e2:	1f 92       	push	r1
  3e4:	0f 92       	push	r0
  3e6:	0f b6       	in	r0, 0x3f	; 63
  3e8:	0f 92       	push	r0
  3ea:	11 24       	eor	r1, r1
  3ec:	8f 93       	push	r24
-    /* Clear interrupt flags */
-    VPORTD.INTFLAGS = 0xff;
  3ee:	8f ef       	ldi	r24, 0xFF	; 255
  3f0:	8f b9       	out	0x0f, r24	; 15
-}
  3f2:	8f 91       	pop	r24
  3f4:	0f 90       	pop	r0
  3f6:	0f be       	out	0x3f, r0	; 63
@@ -689,20 +551,14 @@ ISR(PORTD_PORT_vect)
  3fc:	18 95       	reti
 
 000003fe <__vector_34>:
-
-ISR(PORTF_PORT_vect)
-{ 
  3fe:	1f 92       	push	r1
  400:	0f 92       	push	r0
  402:	0f b6       	in	r0, 0x3f	; 63
  404:	0f 92       	push	r0
  406:	11 24       	eor	r1, r1
  408:	8f 93       	push	r24
-    /* Clear interrupt flags */
-    VPORTF.INTFLAGS = 0xff;
  40a:	8f ef       	ldi	r24, 0xFF	; 255
  40c:	87 bb       	out	0x17, r24	; 23
-}
  40e:	8f 91       	pop	r24
  410:	0f 90       	pop	r0
  412:	0f be       	out	0x3f, r0	; 63
@@ -711,59 +567,26 @@ ISR(PORTF_PORT_vect)
  418:	18 95       	reti
 
 0000041a <protected_write_io>:
-#if defined(__GNUC__)
-  
-#ifdef RAMPZ
-	out     _SFR_IO_ADDR(RAMPZ), r1         // Clear bits 23:16 of Z
-#endif
-	movw    r30, r24                // Load addr into Z
  41a:	fc 01       	movw	r30, r24
-	out     CCP, r22                // Start CCP handshake
  41c:	64 bf       	out	0x34, r22	; 52
-	st      Z, r20                  // Write value to I/O register
  41e:	40 83       	st	Z, r20
-	ret                             // Return to caller
  420:	08 95       	ret
 
 00000422 <SYSTEM_Initialize>:
-**/
-
-
-void SYSTEM_Initialize(void)
-{
-    PIN_MANAGER_Initialize();
  422:	0e 94 7f 01 	call	0x2fe	; 0x2fe <PIN_MANAGER_Initialize>
-    ADC0_Initialize();
  426:	0e 94 9a 00 	call	0x134	; 0x134 <ADC0_Initialize>
-    CLOCK_Initialize();
  42a:	0e 94 26 01 	call	0x24c	; 0x24c <CLOCK_Initialize>
-    VREF_Initialize();
  42e:	0e 94 1c 02 	call	0x438	; 0x438 <VREF_Initialize>
-    CPUINT_Initialize();
  432:	0e 94 73 01 	call	0x2e6	; 0x2e6 <CPUINT_Initialize>
  436:	08 95       	ret
 
 00000438 <VREF_Initialize>:
-#include "../vref.h"
-
-int8_t VREF_Initialize(void)
-{
-    // ALWAYSON disabled; REFSEL Internal 1.024V reference; 
-    VREF.ACREF = 0x0;
  438:	e0 eb       	ldi	r30, 0xB0	; 176
  43a:	f0 e0       	ldi	r31, 0x00	; 0
  43c:	14 82       	std	Z+4, r1	; 0x04
-    
-    // ALWAYSON disabled; REFSEL Internal 4.096V reference; 
-    VREF.ADC0REF = 0x2;
  43e:	82 e0       	ldi	r24, 0x02	; 2
  440:	80 83       	st	Z, r24
-    
-    // ALWAYSON disabled; REFSEL Internal 1.024V reference; 
-    VREF.DAC0REF = 0x0;
  442:	12 82       	std	Z+2, r1	; 0x02
-    
-	return 0;
  444:	80 e0       	ldi	r24, 0x00	; 0
  446:	08 95       	ret
 
