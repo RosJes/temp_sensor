@@ -34,6 +34,13 @@
 
 #include "../pins.h"
 
+static void (*PA7_InterruptHandler)(void);
+static void (*PD7_InterruptHandler)(void);
+static void (*PF0_InterruptHandler)(void);
+static void (*PF2_InterruptHandler)(void);
+static void (*PF3_InterruptHandler)(void);
+static void (*PF4_InterruptHandler)(void);
+static void (*PF5_InterruptHandler)(void);
 
 void PIN_MANAGER_Initialize()
 {
@@ -94,10 +101,113 @@ void PIN_MANAGER_Initialize()
     PORTMUX.USARTROUTEA = 0x0;
 
   // register default ISC callback functions at runtime; use these methods to register a custom function
+    PA7_SetInterruptHandler(PA7_DefaultInterruptHandler);
+    PD7_SetInterruptHandler(PD7_DefaultInterruptHandler);
+    PF0_SetInterruptHandler(PF0_DefaultInterruptHandler);
+    PF2_SetInterruptHandler(PF2_DefaultInterruptHandler);
+    PF3_SetInterruptHandler(PF3_DefaultInterruptHandler);
+    PF4_SetInterruptHandler(PF4_DefaultInterruptHandler);
+    PF5_SetInterruptHandler(PF5_DefaultInterruptHandler);
 }
 
+/**
+  Allows selecting an interrupt handler for PA7 at application runtime
+*/
+void PA7_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PA7_InterruptHandler = interruptHandler;
+}
+
+void PA7_DefaultInterruptHandler(void)
+{
+    // add your PA7 interrupt custom code
+    // or set custom function using PA7_SetInterruptHandler()
+}
+/**
+  Allows selecting an interrupt handler for PD7 at application runtime
+*/
+void PD7_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PD7_InterruptHandler = interruptHandler;
+}
+
+void PD7_DefaultInterruptHandler(void)
+{
+    // add your PD7 interrupt custom code
+    // or set custom function using PD7_SetInterruptHandler()
+}
+/**
+  Allows selecting an interrupt handler for PF0 at application runtime
+*/
+void PF0_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PF0_InterruptHandler = interruptHandler;
+}
+
+void PF0_DefaultInterruptHandler(void)
+{
+    // add your PF0 interrupt custom code
+    // or set custom function using PF0_SetInterruptHandler()
+}
+/**
+  Allows selecting an interrupt handler for PF2 at application runtime
+*/
+void PF2_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PF2_InterruptHandler = interruptHandler;
+}
+
+void PF2_DefaultInterruptHandler(void)
+{
+    // add your PF2 interrupt custom code
+    // or set custom function using PF2_SetInterruptHandler()
+}
+/**
+  Allows selecting an interrupt handler for PF3 at application runtime
+*/
+void PF3_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PF3_InterruptHandler = interruptHandler;
+}
+
+void PF3_DefaultInterruptHandler(void)
+{
+    // add your PF3 interrupt custom code
+    // or set custom function using PF3_SetInterruptHandler()
+}
+/**
+  Allows selecting an interrupt handler for PF4 at application runtime
+*/
+void PF4_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PF4_InterruptHandler = interruptHandler;
+}
+
+void PF4_DefaultInterruptHandler(void)
+{
+    // add your PF4 interrupt custom code
+    // or set custom function using PF4_SetInterruptHandler()
+}
+/**
+  Allows selecting an interrupt handler for PF5 at application runtime
+*/
+void PF5_SetInterruptHandler(void (* interruptHandler)(void)) 
+{
+    PF5_InterruptHandler = interruptHandler;
+}
+
+void PF5_DefaultInterruptHandler(void)
+{
+    // add your PF5 interrupt custom code
+    // or set custom function using PF5_SetInterruptHandler()
+}
 ISR(PORTA_PORT_vect)
 { 
+    // Call the interrupt handler for the callback registered at runtime
+    if(VPORTA.INTFLAGS & PORT_INT7_bm)
+    {
+       PA7_InterruptHandler(); 
+    }
     /* Clear interrupt flags */
     VPORTA.INTFLAGS = 0xff;
 }
@@ -110,12 +220,38 @@ ISR(PORTC_PORT_vect)
 
 ISR(PORTD_PORT_vect)
 { 
+    // Call the interrupt handler for the callback registered at runtime
+    if(VPORTD.INTFLAGS & PORT_INT7_bm)
+    {
+       PD7_InterruptHandler(); 
+    }
     /* Clear interrupt flags */
     VPORTD.INTFLAGS = 0xff;
 }
 
 ISR(PORTF_PORT_vect)
 { 
+    // Call the interrupt handler for the callback registered at runtime
+    if(VPORTF.INTFLAGS & PORT_INT0_bm)
+    {
+       PF0_InterruptHandler(); 
+    }
+    if(VPORTF.INTFLAGS & PORT_INT2_bm)
+    {
+       PF2_InterruptHandler(); 
+    }
+    if(VPORTF.INTFLAGS & PORT_INT3_bm)
+    {
+       PF3_InterruptHandler(); 
+    }
+    if(VPORTF.INTFLAGS & PORT_INT4_bm)
+    {
+       PF4_InterruptHandler(); 
+    }
+    if(VPORTF.INTFLAGS & PORT_INT5_bm)
+    {
+       PF5_InterruptHandler(); 
+    }
     /* Clear interrupt flags */
     VPORTF.INTFLAGS = 0xff;
 }
